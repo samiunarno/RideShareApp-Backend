@@ -17,6 +17,9 @@ import rideRoutes from './modules/ride/rideRoutes';
 import driverRoutes from './modules/driver/driverRoutes';
 import adminRoutes from './modules/admin/adminRoutes';
 
+// Import route logger
+import { logRoutes } from './logRoutes';
+
 // Load environment variables
 dotenv.config();
 
@@ -33,10 +36,10 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Fixed Rate limiting
+// Rate limiting
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),      // ✅ use 'max' instead of 'limit'
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.',
@@ -89,12 +92,15 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
+// Start server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
+  const baseUrl = `http://localhost:${PORT}`;
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔗 Health check: ${baseUrl}/`);
+  logRoutes(app, baseUrl); // ✅ Correct usage
 });
 
 export default app;
