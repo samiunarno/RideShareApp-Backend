@@ -24,7 +24,7 @@ exports.registerSchema = joi_1.default.object({
     name: joi_1.default.string().min(2).max(50).required(),
     email: joi_1.default.string().email().required(),
     password: joi_1.default.string().min(6).required(),
-    role: joi_1.default.string().valid('rider', 'driver').required(),
+    role: joi_1.default.string().valid('rider', 'driver', 'admin').required(),
     phone: joi_1.default.string().pattern(/^[0-9+\-\s()]+$/).optional(),
     // Driver-specific fields
     licenseNumber: joi_1.default.when('role', {
